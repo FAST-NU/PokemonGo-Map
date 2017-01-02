@@ -14,6 +14,7 @@ var $selectSearchIconMarker
 var $selectGymMarkerStyle
 var $selectLocationIconMarker
 var $switchGymSidebar
+var $showTimers
 
 var language = document.documentElement.lang === '' ? 'en' : document.documentElement.lang
 var idToPokemon = {}
@@ -314,6 +315,7 @@ function initSidebar () {
   $('#gym-sidebar-wrapper').toggle(Store.get('showGyms'))
   $('#pokemon-switch').prop('checked', Store.get('showPokemon'))
   $('#pokestops-switch').prop('checked', Store.get('showPokestops'))
+  $('#timer-switch').prop('checked', Store.get('showTimers'))
   $('#lured-pokestops-only-switch').val(Store.get('showLuredPokestopsOnly'))
   $('#lured-pokestops-only-wrapper').toggle(Store.get('showPokestops'))
   $('#geoloc-switch').prop('checked', Store.get('geoLocate'))
@@ -395,7 +397,7 @@ function pokemonLabel (name, rarity, types, disappearTime, id, latitude, longitu
     </div>
     <div>
       Disappears at ${pad(disappearDate.getHours())}:${pad(disappearDate.getMinutes())}:${pad(disappearDate.getSeconds())}
-      <span class='label-countdown' disappears-at='${disappearTime}'>(00m00s)</span>
+      (<span class='label-countdown' disappears-at='${disappearTime}'>00:00</span>)
     </div>
     <div>
       Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
@@ -511,7 +513,7 @@ function pokestopLabel (expireTime, latitude, longitude) {
       </div>
       <div>
         Lure expires at ${pad(expireDate.getHours())}:${pad(expireDate.getMinutes())}:${pad(expireDate.getSeconds())}
-        <span class='label-countdown' disappears-at='${expireTime}'>(00m00s)</span>
+        (<span class='label-countdown' disappears-at='${expireTime}'>00:00</span>)
       </div>
       <div>
         Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
@@ -1285,16 +1287,14 @@ var updateLabelDiffTime = function () {
     var timestring = ''
 
     if (disappearsAt < now) {
-      timestring = '(expired)'
+      timestring = 'expired'
     } else {
-      timestring = '('
       if (hours > 0) {
-        timestring = hours + 'h'
+        timestring = hours + ':'
       }
 
-      timestring += ('0' + minutes).slice(-2) + 'm'
-      timestring += ('0' + seconds).slice(-2) + 's'
-      timestring += ')'
+      timestring += ('0' + minutes).slice(-2) + ':'
+      timestring += ('0' + seconds).slice(-2)
     }
 
     $(element).text(timestring)
@@ -1782,6 +1782,14 @@ $(function () {
       mapData[dType] = {}
     })
     updateMap()
+  })
+
+  $showTimers = $('#timer-switch')
+
+  $showTimers.on('change', function() {
+    Store.set('showTimers', this.checked)
+    redrawPokemon(mapData.pokemons)
+    redrawPokemon(mapData.lurePokemons)
   })
 
   $selectSearchIconMarker = $('#iconmarker-style')
