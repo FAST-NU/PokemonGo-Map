@@ -1056,7 +1056,7 @@ function setupPokemonMarker (item, map, isBounceDisabled) {
     animationDisabled = true
   }
 
-  var marker;
+  var marker
 
   if (showTimers && map.getZoom() >= hideTimersAtZoomLevel) {
     marker = new MarkerWithLabel({ // eslint-disable-line no-undef
