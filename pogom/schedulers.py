@@ -866,16 +866,17 @@ class SchedulerFactory():
 
         raise NotImplementedError("The requested scheduler has not been implemented")
 
+
 # The KeyScheduler returns a scheduler that cycles through the given hash server keys.
 class KeyScheduler(object):
     def __init__(self, keys):
         self.keys = keys
         self.key_cycle = itertools.cycle(self.keys)
         self.curr_key = ''
-		
+
     def current_key(self):
         return self.curr_key
-		
+
     def next_key(self):
         self.curr_key = self.key_cycle.next()
         return self.curr_key
